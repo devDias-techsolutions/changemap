@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Relatório - ChangeMap</title>
+  <style>
+    body {
+      background-color: #000006;
+      font-family: 'Segoe UI', sans-serif;
+      color: #f1f1f1;
+      margin: 0;
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    h1 {
+      color: #00e5ff;
+      font-size: 36px;
+      text-shadow: 0 0 10px #00e5ff;
+      margin-bottom: 10px;
+    }
+
+    h3 {
+      color: #8ce6ff;
+      font-weight: 300;
+      margin-bottom: 40px;
+    }
+
+    .status-boxes {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 40px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .box {
+      background-color: #00121d;
+      padding: 20px 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 12px rgba(0,229,255,0.2);
+      text-align: center;
+      min-width: 150px;
+    }
+
+    .box span {
+      font-size: 26px;
+      font-weight: bold;
+      display: block;
+      margin-top: 5px;
+    }
+
+    .novos        { color: #00bfa6; }
+    .alterados    { color: #ffb400; }
+    .removidos    { color: #c0392b; }
+    .substituidos { color: #8e44ad; }
+
+    table {
+      width: 95%;
+      border-collapse: collapse;
+      background-color: #000518;
+      box-shadow: 0 0 20px rgba(0,229,255,0.05);
+    }
+
+    th, td {
+      padding: 10px 12px;
+      border-bottom: 1px solid #00e5ff11;
+      text-align: left;
+    }
+
+    th {
+      color: #00e5ff;
+      font-weight: bold;
+      text-transform: uppercase;
+      font-size: 12px;
+      border-bottom: 2px solid #00e5ff55;
+    }
+
+    td.status {
+      font-weight: bold;
+    }
+
+    .icon {
+      margin-right: 6px;
+    }
+
+    .status-novo        { color: #00bfa6; }
+    .status-alterado    { color: #ffb400; }
+    .status-removido    { color: #c0392b; }
+    .status-substituido { color: #8e44ad; }
+  </style>
+</head>
+<body>
+  <h1>Resultado da Comparação</h1>
+  <h3>Dispositivos com alterações na rede</h3>
+
+  <div class="status-boxes">
+    <div class="box novos">🟢 Novos <span>14</span></div>
+    <div class="box alterados">🟠 Alterados <span>7</span></div>
+    <div class="box removidos">🔴 Removidos <span>4</span></div>
+    <div class="box substituidos">🟣 Substituídos <span>3</span></div>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Serial</th>
+        <th>Hostname</th>
+        <th>IP</th>
+        <th>Status</th>
+        <th>Descrição</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>SERIAL-001</td>
+        <td>SW-Core-01</td>
+        <td>10.0.0.1</td>
+        <td class="status status-novo">🟢 Novo</td>
+        <td>Dispositivo adicionado à rede</td>
+      </tr>
+      <tr>
+        <td>SERIAL-002</td>
+        <td>SW-Core-02</td>
+        <td>10.0.0.2</td>
+        <td class="status status-alterado">🟠 Alterado</td>
+        <td>Hostname modificado</td>
+      </tr>
+      <tr>
+        <td>SERIAL-003</td>
+        <td>SW-Core-03</td>
+        <td>10.0.0.3</td>
+        <td class="status status-removido">🔴 Removido</td>
+        <td>Dispositivo removido da rede</td>
+      </tr>
+      <tr>
+        <td>SERIAL-004</td>
+        <td>SW-Core-04</td>
+        <td>10.0.0.4</td>
+        <td class="status status-substituido">🟣 Substituído</td>
+        <td>Substituído por novo modelo</td>
+      </tr>
+    </tbody>
+  </table>
+</body>
+</html>
