@@ -75,28 +75,32 @@
   <script>
     document.getElementById("compareForm").addEventListener("submit", function(e) {
       e.preventDefault();
-
+  
       const atual = document.getElementById("abaAtual").value;
       const anterior = document.getElementById("abaAnterior").value;
-
-      const url = "https://script.google.com/macros/s/AKfycbx0JE0Hc2m_6KPKH0sUXfgS5mO7vJcqbqEXRScRInWoHxmX-HpB9jj2B3w3d0uIsrmt/exec";
-      
-      fetch(url, {
-        method: "POST",
-        body: new URLSearchParams({
-          abaAtual: atual,
-          abaAnterior: anterior
-        }),
-      })
-      .then(() => {
-        setTimeout(() => {
-          window.location.href = "https://devdias-techsolutions.github.io/changemap/relatorio.html";
-        }, 2000); // 2 segundos de intervalo
-      })
-      .catch(() => {
-        alert("Erro ao executar a análise. Verifique os nomes das abas e tente novamente.");
-      });
+  
+      if (!atual || !anterior) {
+        alert("Preencha ambas as bases.");
+        return;
+      }
+  
+      const endpoint = "https://script.google.com/macros/s/AKfycbx0JE0Hc2m_6KPKH0sUXfgS5mO7vJcqbqEXRScRInWoHxmX-HpB9jj2B3w3d0uIsrmt/exec";
+      const url = `${endpoint}?abaAtual=${encodeURIComponent(atual)}&abaAnterior=${encodeURIComponent(anterior)}`;
+  
+      // Chama o Web App via GET
+      fetch(url)
+        .then(response => response.text())
+        .then(() => {
+          // Aguarda 2 segundos e redireciona
+          setTimeout(() => {
+            window.location.href = "https://devdias-techsolutions.github.io/changemap/relatorio.html";
+          }, 2000);
+        })
+        .catch(() => {
+          alert("Erro ao executar a comparação. Verifique os dados e tente novamente.");
+        });
     });
   </script>
+
 </body>
 </html>
