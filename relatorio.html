@@ -5,9 +5,380 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Relatório - ChangeMap</title>
   <style>
-    /* Estilo completo inserido aqui (omitido nesta resposta por limite de espaço) */
-    /* Copiar e colar o style que você forneceu anteriormente */
-  </style>
+        body {
+        /* Usando uma cor de fundo escura com uma imagem de circuito simulada com gradiente */
+        background-color: #000006;
+        background-image: 
+          radial-gradient(circle at 20% 35%, rgba(0, 229, 255, 0.05) 1px, transparent 2px),
+          radial-gradient(circle at 75% 65%, rgba(0, 229, 255, 0.07) 1px, transparent 2px),
+          linear-gradient(90deg, rgba(0, 229, 255, 0.03) 1px, transparent 1px),
+          linear-gradient(to bottom, transparent 95%, rgba(0, 229, 255, 0.1) 100%);
+        background-size: 50px 50px, 70px 70px, 40px, 100%;
+        background-position: center;
+        background-attachment: fixed;
+        color: #f1f1f1;
+        margin: 0;
+        padding: 20px;
+        font-family: Arial, sans-serif;
+      }
+      .status-icon {
+        font-style: normal;
+        font-size: 16px;
+        margin-right: 10px;
+        display: inline-block;
+        width: 24px;
+        height: 24px;
+        line-height: 24px;
+        text-align: center;
+        border-radius: 50%;
+        background-color: rgba(0, 0, 0, 0.4);
+        box-shadow: 0 0 8px rgba(0, 229, 255, 0.3);
+        text-shadow: 0 0 5px currentColor;
+      }
+
+      h2 {
+        color: #00e5ff;
+        font-size: 32px;
+        margin-bottom: 20px;
+        border-bottom: 1px solid rgba(0, 229, 255, 0.3);
+        padding-bottom: 10px;
+        text-align: center;
+        text-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
+        letter-spacing: 1px;
+      }
+
+      h4 {
+        color: #00e5ff;
+        font-size: 22px;
+        margin-bottom: 30px;
+        padding-bottom: 10px;
+        text-align: center;
+        font-weight: 300;
+        opacity: 0.9;
+        letter-spacing: 0.5px;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        background-color: rgba(0, 0, 6, 0.7);
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.4), 0 0 25px rgba(0, 229, 255, 0.15);
+        border-radius: 8px;
+        overflow: hidden;
+        border: 1px solid rgba(0, 229, 255, 0.15);
+        margin-top:20px;
+      }
+
+      th, td {
+        border: 1px solid rgba(31, 40, 51, 0.7);
+        padding: 14px 18px;
+        text-align: left;
+        font-size:15px;
+      }
+
+      th {
+        background-color: rgba(31, 40, 51, 0.8);
+        color: #00e5ff;
+        font-weight: 500;
+        letter-spacing: 0.5px;
+        text-shadow: 0 0 5px rgba(0, 229, 255, 0.3);
+      }
+      
+      tbody tr:hover {
+        background-color: #1F2833;
+      }
+
+      select, button {
+        margin: 12px 8px 24px 0;
+        padding: 12px 22px;
+        background-color: rgba(0, 6, 38, 0.7);
+        color: #00e5ff;
+        border: 1px solid rgba(0, 229, 255, 0.3);
+        border-radius: 4px;
+        transition: all 0.3s ease;
+        font-weight: 500;
+        font-size:15px;
+      }
+
+      button {
+        background-color: rgba(0, 26, 51, 0.8);
+        padding: 10px 20px;
+        border-radius: 50px;
+        letter-spacing: 0.5px;
+      }
+
+      select:hover, button:hover {
+        background-color: rgba(0, 38, 77, 0.9);
+        box-shadow: 0 0 12px rgba(0, 229, 255, 0.4);
+        cursor: pointer;
+        transform: translateY(-1px);
+      }
+
+      select:focus {
+        outline: none;
+        border-color: #00e5ff;
+        box-shadow: 0 0 5px rgba(0, 229, 255, 0.5);
+      }
+
+      .botao-container {
+        margin-bottom: 25px;
+        background-color: rgba(31, 40, 51, 0.6);
+        padding: 22px;
+        border-radius: 8px;
+        border-left: 3px solid #00e5ff;
+        box-shadow: inset 0 0 20px rgba(0, 229, 255, 0.05);
+      }
+
+      label {
+        color: #00e5ff;
+        margin-right: 12px;
+        font-weight: 500;
+        letter-spacing: 0.5px;
+      }
+
+      .totals-row {
+        font-weight: bold;
+        background-color: #1F2833;
+      }
+      
+      .status-summary {
+        background-color: rgba(31, 40, 51, 0.6);
+        border-radius: 8px;
+        padding: 22px;
+        margin-bottom: 25px;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+        border-left: 3px solid #00e5ff;
+        box-shadow: inset 0 0 20px rgba(0, 229, 255, 0.05);
+      }
+      
+      .status-summary span {
+        display: inline-flex;
+        align-items: center;
+        margin: 6px 18px 6px 0;
+        padding: 12px 18px;
+        border-radius: 50px;
+        background-color: rgba(0, 10, 30, 0.6);
+        box-shadow: 0 0 10px rgba(0, 229, 255, 0.1);
+        transition: all 0.3s ease;
+        font-size:15px;
+      }
+      
+      .status-summary span:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 0 15px rgba(0, 229, 255, 0.2);
+      }
+      
+      .status-summary::before {
+        content: "Resumo por Status:";
+        font-weight: bold;
+        color: #00e5ff;
+        margin-right: 15px;
+        font-size: 14px;
+        flex-basis: 100%;
+        margin-bottom: 10px;
+      }
+      
+      #totalDetalhado span {
+        display: inline-block;
+        margin-right: 15px;
+        padding: 3px 8px;
+        border-radius: 4px;
+        background-color: rgba(0, 0, 0, 0.2);
+      }
+      
+      /* Adicionar container principal para melhorar legibilidade */
+      .main-container {
+        background-color: rgba(0, 10, 20, 0.85);
+        padding: 30px; /* Aumentado de 20px para 30px para mais espaço interno */
+        border-radius: 12px; /* Aumentado de 10px para 12px */
+        margin: 20px auto; /* Centralizado na página com margem superior e inferior */
+        box-shadow: 0 0 30px rgba(0, 229, 255, 0.3), 0 0 40px rgba(0, 0, 0, 0.6); /* Sombra mais acentuada */
+        border: 1px solid rgba(0, 229, 255, 0.3); /* Borda um pouco mais visível */
+        max-width: 95%; /* Define uma largura máxima relativa à tela */
+        width: 1200px; /* Aumenta a largura base para 1200px */
+      }
+      
+      /* MODIFICADO: Estilo da tela de carregamento reposicionada */
+      .loading-overlay {
+        position: fixed; /* Mudado de absolute para fixed */
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 5, 24, 0.85);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        backdrop-filter: blur(5px);
+      }
+
+      .loading-container {
+        width: 90%;
+        max-width: 600px;
+        text-align: center;
+        position: relative;
+        top: -50px; /* Move um pouco para cima para centralizar melhor visualmente */
+      }
+
+      .loading-text {
+        color: #00e0ff;
+        font-size: 1.2em;
+        margin-bottom: 25px;
+        letter-spacing: 1px;
+        text-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
+      }
+
+      .progress-container {
+        width: 100%;
+        height: 10px;
+        background-color: rgba(255, 255, 255, 0.1);
+        border-radius: 5px;
+        overflow: hidden;
+        position: relative;
+        margin-bottom: 15px;
+      }
+
+      .progress-bar {
+        height: 100%;
+        width: 0%;
+        background: linear-gradient(90deg, #00c6a9, #00e0ff);
+        border-radius: 5px;
+        position: relative;
+        transition: width 0.4s ease;
+        animation: pulse 1.5s infinite;
+      }
+
+      .progress-bar::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+        animation: shine 2s infinite;
+      }
+
+      .progress-percentage {
+        color: #fff;
+        font-size: 14px;
+        margin-top: 5px;
+      }
+
+      .loading-message {
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 0.9em;
+        margin-top: 10px;
+        font-style: italic;
+      }
+
+      /* Efeito de brilho intermitente na borda do progresso */
+      .progress-container::before {
+        content: '';
+        position: absolute;
+        top: -1px;
+        left: -1px;
+        right: -1px;
+        bottom: -1px;
+        border-radius: 6px;
+        background: linear-gradient(90deg, #00c6a9, #00e0ff, #00c6a9);
+        z-index: -1;
+        animation: borderPulse 2s infinite;
+      }
+
+      /* Indicadores tech ao redor da barra de progresso */
+      .tech-indicators {
+        position: absolute;
+        width: 100%;
+        top: -15px;
+        left: 0;
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .tech-indicator {
+        width: 3px;
+        height: 7px;
+        background-color: #00e0ff;
+        opacity: 0.5;
+      }
+
+      .tech-indicator:nth-child(odd) {
+        height: 10px;
+        animation: flash 3s infinite;
+      }
+
+      @keyframes pulse {
+        0%, 100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.8;
+        }
+      }
+
+      @keyframes shine {
+        0% {
+          transform: translateX(-100%);
+        }
+        100% {
+          transform: translateX(100%);
+        }
+      }
+
+      @keyframes borderPulse {
+        0%, 100% {
+          opacity: 0.5;
+        }
+        50% {
+          opacity: 0.2;
+        }
+      }
+
+      @keyframes flash {
+        0%, 100% {
+          opacity: 0.5;
+        }
+        50% {
+          opacity: 1;
+        }
+      }
+
+      /* Animação de dados digitais na parte inferior */
+      .data-stream {
+        font-family: monospace;
+        color: rgba(0, 230, 255, 0.5);
+        font-size: 12px;
+        margin-top: 30px;
+        letter-spacing: 2px;
+        height: 16px;
+        overflow: hidden;
+        position: relative;
+      }
+
+      .data-text {
+        white-space: nowrap;
+        animation: scrollData 15s linear infinite;
+      }
+
+      @keyframes scrollData {
+        from {
+          transform: translateX(100%);
+        }
+        to {
+          transform: translateX(-100%);
+        }
+      }
+
+    
+
+    </style>
+    
 </head>
 <body>
   <div class="main-container">
