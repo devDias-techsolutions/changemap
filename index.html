@@ -68,7 +68,7 @@
       <button type="submit">🚀 Executar Comparação</button>
     </form>
 
-    <p class="note">Após executar, você será direcionado para o relatório com os resultados.</p>
+    <p class="note">Após executar, você será redirecionado para execução via Apps Script.</p>
   </div>
 
   <script>
@@ -86,18 +86,8 @@
       const endpoint = "https://script.google.com/macros/s/AKfycbwAe5PZ7CmpGja8VqpR6IuIK3mCCryG9IDpKry8npQnjmC4LA_9qUBuC_u-G-uv6tRw/exec";
       const url = `${endpoint}?abaAtual=${encodeURIComponent(atual)}&abaAnterior=${encodeURIComponent(anterior)}`;
 
-      fetch(url)
-        .then(response => response.text())
-        .then(text => {
-          console.log("Resposta do Web App:", text);
-          setTimeout(() => {
-            window.location.href = "https://devdias-techsolutions.github.io/changemap/relatorio.html";
-          }, 2000);
-        })
-        .catch(error => {
-          console.error("Erro no fetch:", error);
-          alert("Erro ao executar a comparação.");
-        });
+      // Redireciona para o Apps Script diretamente, evitando problema de CORS
+      window.location.href = url;
     });
   </script>
 </body>
