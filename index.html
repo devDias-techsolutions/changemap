@@ -3,199 +3,76 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ChangeMap - Network Device Change Mapping</title>
+  <title>ChangeMap - Seleção de Bases</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@300;400;700;900&display=swap" rel="stylesheet">
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
     body {
+      margin: 0;
       background-color: #000006;
-      background-image: 
-        radial-gradient(circle at 20% 35%, rgba(0, 229, 255, 0.05) 1px, transparent 2px),
-        radial-gradient(circle at 75% 65%, rgba(0, 229, 255, 0.07) 1px, transparent 2px),
-        linear-gradient(90deg, rgba(0, 229, 255, 0.03) 1px, transparent 1px),
-        linear-gradient(to bottom, transparent 95%, rgba(0, 229, 255, 0.1) 100%);
-      background-size: 50px 50px, 70px 70px, 40px, 100%;
-      background-position: center;
-      background-attachment: fixed;
-      color: #f1f1f1;
-      font-family: 'Orbitron', monospace;
-      min-height: 100vh;
+      color: #00e5ff;
+      font-family: 'Orbitron', sans-serif;
       display: flex;
-      align-items: center;
       justify-content: center;
-      padding: 20px;
+      align-items: center;
+      height: 100vh;
     }
-
     .container {
-      background-color: #000518;
-      border-radius: 16px;
-      padding: 40px;
-      box-shadow: 0 0 30px rgba(0, 229, 255, 0.3);
-      max-width: 600px;
-      width: 100%;
       text-align: center;
     }
-
-    h1 {
-      color: #00e5ff;
-      font-size: 3.5rem;
-      font-weight: 900;
-      margin-bottom: 10px;
-      text-shadow: 0 0 20px rgba(0, 229, 255, 0.6);
-      letter-spacing: 2px;
-    }
-
-    .subtitle {
-      color: #8ce6ff;
-      font-size: 1.2rem;
-      font-weight: 300;
-      margin-bottom: 40px;
-      opacity: 0.9;
-    }
-
-    .form-container {
-      background: linear-gradient(145deg, #001b2e, #002642);
+    .form-box {
+      background: #001b2e;
       padding: 30px;
       border-radius: 12px;
-      box-shadow: 
-        inset 0 2px 10px rgba(0, 0, 0, 0.3),
-        0 0 20px rgba(0, 229, 255, 0.1);
-      margin-bottom: 30px;
-    }
-
-    .input-group {
-      margin-bottom: 25px;
-      text-align: left;
-    }
-
-    label {
-      display: block;
-      color: #00e5ff;
-      font-weight: 700;
-      margin-bottom: 8px;
-      font-size: 1rem;
-      letter-spacing: 1px;
-    }
-
-    input[type="text"] {
-      width: 100%;
-      padding: 12px 16px;
-      border: 2px solid rgba(0, 229, 255, 0.3);
-      border-radius: 8px;
-      background: rgba(0, 0, 0, 0.4);
-      color: #f1f1f1;
-      font-family: 'Orbitron', monospace;
-      font-size: 1rem;
-      transition: all 0.3s ease;
-    }
-
-    input[type="text"]:focus {
-      outline: none;
-      border-color: #00e5ff;
-      box-shadow: 0 0 15px rgba(0, 229, 255, 0.4);
-    }
-
-    input[type="text"]::placeholder {
-      color: rgba(140, 230, 255, 0.6);
-    }
-
-    .btn-container {
-      margin-top: 30px;
-    }
-
-    .btn-execute {
-      background: linear-gradient(135deg, #00e5ff, #0084cc);
-      color: #001b2e;
-      border: none;
-      padding: 15px 35px;
-      border-radius: 50px;
-      font-family: 'Orbitron', monospace;
-      font-weight: 700;
-      font-size: 1.1rem;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      letter-spacing: 1px;
-      box-shadow: 0 4px 15px rgba(0, 229, 255, 0.3);
-    }
-
-    .btn-execute:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 25px rgba(0, 229, 255, 0.5);
-      background: linear-gradient(135deg, #33eaff, #00a8e6);
-    }
-
-    .btn-execute:active {
-      transform: translateY(0);
-    }
-
-    .status-message {
-      margin-top: 25px;
-      padding: 15px;
-      border-radius: 8px;
-      font-weight: 400;
-      display: none;
-    }
-
-    .status-loading {
-      background: rgba(255, 193, 7, 0.1);
-      border: 1px solid rgba(255, 193, 7, 0.3);
-      color: #ffc107;
-    }
-
-    .loading-spinner {
+      box-shadow: 0 0 30px rgba(0,229,255,0.3);
       display: inline-block;
-      width: 20px;
-      height: 20px;
-      border: 2px solid rgba(255, 193, 7, 0.3);
-      border-radius: 50%;
-      border-top-color: #ffc107;
-      animation: spin 1s ease-in-out infinite;
-      margin-right: 10px;
     }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
+    input {
+      padding: 10px;
+      width: 220px;
+      border: none;
+      border-radius: 6px;
+      margin-bottom: 15px;
+    }
+    button {
+      padding: 12px 24px;
+      font-weight: bold;
+      border: none;
+      border-radius: 50px;
+      background: #00e5ff;
+      color: #001b2e;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    p.note {
+      margin-top: 30px;
+      color: #aaa;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>ChangeMap</h1>
-    <p class="subtitle">Mapeamento de alterações em dispositivos de rede</p>
+    <h1 style="font-size: 48px; text-shadow: 0 0 10px #00e5ff;">ChangeMap</h1>
+    <p style="font-size: 20px; color: #8ce6ff; margin-bottom: 40px;">Selecione as bases e execute a análise de mudanças</p>
 
-    <form id="compareForm" class="form-container">
-      <div class="input-group">
-        <label for="abaAtual">Base Atual:</label>
-        <input type="text" id="abaAtual" placeholder="Ex: Fev2025" required>
+    <form id="compareForm" class="form-box">
+      <div>
+        <label><strong>Base Atual:</strong></label><br>
+        <input type="text" id="abaAtual" placeholder="Ex: Fev2025" required><br>
+
+        <label><strong>Base Anterior:</strong></label><br>
+        <input type="text" id="abaAnterior" placeholder="Ex: Jan2025" required><br>
       </div>
 
-      <div class="input-group">
-        <label for="abaAnterior">Base Anterior:</label>
-        <input type="text" id="abaAnterior" placeholder="Ex: Jan2025" required>
-      </div>
-
-      <div class="btn-container">
-        <button type="submit" class="btn-execute">🚀 Executar Comparação</button>
-      </div>
+      <button type="submit">🚀 Executar Comparação</button>
     </form>
 
-    <div id="statusMessage" class="status-message status-loading">
-      <span class="loading-spinner"></span> Executando análise, aguarde...
-    </div>
+    <p class="note">Após executar, você será direcionado para o relatório com os resultados.</p>
   </div>
 
   <script>
-    const form = document.getElementById("compareForm");
-    const statusBox = document.getElementById("statusMessage");
-
-    form.addEventListener("submit", function(e) {
+    document.getElementById("compareForm").addEventListener("submit", function(e) {
       e.preventDefault();
 
       const atual = document.getElementById("abaAtual").value;
@@ -206,24 +83,20 @@
         return;
       }
 
-      // 🔁 SUBSTITUA abaixo com o ID REAL DO SEU WEB APP
       const endpoint = "https://script.google.com/macros/s/AKfycbwAe5PZ7CmpGja8VqpR6IuIK3mCCryG9IDpKry8npQnjmC4LA_9qUBuC_u-G-uv6tRw/exec";
-
       const url = `${endpoint}?abaAtual=${encodeURIComponent(atual)}&abaAnterior=${encodeURIComponent(anterior)}`;
-
-      // Exibe carregando
-      statusBox.style.display = "block";
 
       fetch(url)
         .then(response => response.text())
-        .then(() => {
+        .then(text => {
+          console.log("Resposta do Web App:", text);
           setTimeout(() => {
             window.location.href = "https://devdias-techsolutions.github.io/changemap/relatorio.html";
           }, 2000);
         })
-        .catch(() => {
-          statusBox.className = "status-message status-error";
-          statusBox.textContent = "Erro ao executar a comparação.";
+        .catch(error => {
+          console.error("Erro no fetch:", error);
+          alert("Erro ao executar a comparação.");
         });
     });
   </script>
