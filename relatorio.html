@@ -20,7 +20,6 @@
       padding: 20px;
       font-family: Arial, sans-serif;
     }
-
     .main-container {
       background-color: rgba(0, 10, 20, 0.85);
       padding: 30px;
@@ -31,29 +30,21 @@
       max-width: 95%;
       width: 1200px;
     }
-
     .header {
       text-align: center;
       margin-bottom: 40px;
     }
-
     .header h1 {
       font-size: 2.5rem;
       color: #00e5ff;
       text-shadow: 0 0 10px rgba(0,229,255,0.8);
     }
-
     .header h2 {
       font-size: 1.2rem;
       color: #8ce6ff;
       font-weight: 300;
       margin-top: 10px;
     }
-
-    h2, h4 { text-align: center; color: #00e5ff; text-shadow: 0 0 10px rgba(0, 229, 255, 0.5); }
-    h2 { font-size: 32px; margin-bottom: 20px; }
-    h4 { font-size: 22px; margin-bottom: 30px; font-weight: 300; }
-
     table {
       width: 100%;
       border-collapse: collapse;
@@ -62,23 +53,23 @@
       border-radius: 8px;
       overflow: hidden;
     }
-
     th, td {
       padding: 14px 18px;
       border: 1px solid rgba(31, 40, 51, 0.7);
       font-size: 15px;
       text-align: left;
     }
-
     th {
       background-color: rgba(31, 40, 51, 0.8);
       color: #00e5ff;
     }
-
     tbody tr:hover {
       background-color: #1F2833;
     }
-
+    .status-novo { color: #00bfa6; font-weight: bold; }
+    .status-removido { color: #c0392b; font-weight: bold; }
+    .status-substituido { color: #8e44ad; font-weight: bold; }
+    .status-alterado { color: #ffb400; font-weight: bold; }
     .loading-overlay {
       position: fixed;
       top: 0; left: 0;
@@ -90,7 +81,6 @@
       align-items: center;
       z-index: 1000;
     }
-
     .progress-container {
       width: 90%;
       max-width: 600px;
@@ -98,25 +88,20 @@
       background-color: rgba(255, 255, 255, 0.1);
       border-radius: 5px;
       overflow: hidden;
-      position: relative;
       margin-bottom: 15px;
     }
-
     .progress-bar {
       height: 100%;
       width: 0%;
       background: linear-gradient(90deg, #00c6a9, #00e0ff);
       border-radius: 5px;
-      transition: width 0.4s ease;
       animation: pulse 1.5s infinite;
     }
-
     .progress-percentage {
       color: #fff;
       font-size: 14px;
       margin-top: 5px;
     }
-
     .data-stream {
       font-family: monospace;
       color: rgba(0, 230, 255, 0.5);
@@ -126,17 +111,14 @@
       height: 16px;
       overflow: hidden;
     }
-
     .data-text {
       white-space: nowrap;
       animation: scrollData 15s linear infinite;
     }
-
     @keyframes scrollData {
       from { transform: translateX(100%); }
       to { transform: translateX(-100%); }
     }
-
     @keyframes pulse {
       0%, 100% { opacity: 1; }
       50% { opacity: 0.8; }
@@ -151,12 +133,10 @@
     </div>
 
     <div class="loading-overlay" id="carregando">
-      <div style="text-align: center;">
-        <p style="color:#00e5ff">Analisando dispositivos e gerando relatório...</p>
-        <div class="progress-container"><div class="progress-bar" id="barraProgresso"></div></div>
-        <div class="progress-percentage" id="percentual">0%</div>
-        <div class="data-stream"><div class="data-text">01010101010101011010101010101101010101010011010101...</div></div>
-      </div>
+      <p style="color:#00e5ff">Analisando dispositivos e gerando relatório...</p>
+      <div class="progress-container"><div class="progress-bar" id="barraProgresso"></div></div>
+      <div class="progress-percentage" id="percentual">0%</div>
+      <div class="data-stream"><div class="data-text">010101001011010101100101101010101101...</div></div>
     </div>
 
     <table>
@@ -170,16 +150,47 @@
   <script>
     const barra = document.getElementById('barraProgresso');
     const percentual = document.getElementById('percentual');
+    const overlay = document.getElementById('carregando');
+    const tabela = document.getElementById('tabelaRelatorio');
+
     let progresso = 0;
     const simular = setInterval(() => {
-      if (progresso < 95) {
-        progresso += Math.random() * 5;
+      if (progresso < 98) {
+        progresso += Math.random() * 3;
         barra.style.width = progresso + '%';
         percentual.textContent = Math.floor(progresso) + '%';
-      } else {
-        clearInterval(simular);
       }
     }, 300);
+
+    fetch("https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID/exec?view=relatorio-json")
+      .then(res => res.json())
+      .then(dados => {
+        clearInterval(simular);
+        barra.style.width = '100%';
+        percentual.textContent = '100%';
+        setTimeout(() => overlay.style.display = 'none', 500);
+
+        dados.forEach(item => {
+          const tr = document.createElement('tr');
+          const status = item["Status"].toLowerCase();
+          let classe = '';
+          if (status.includes("novo")) classe = 'status-novo';
+          else if (status.includes("removido")) classe = 'status-removido';
+          else if (status.includes("substituido")) classe = 'status-substituido';
+          else if (status.includes("alterado")) classe = 'status-alterado';
+
+          tr.innerHTML = `<td>${item["Serial Number"] || ''}</td>
+                          <td>${item["Hostname"] || ''}</td>
+                          <td>${item["IP"] || ''}</td>
+                          <td class="${classe}">${item["Status"] || ''}</td>
+                          <td>${item["Descrição da Alteração"] || ''}</td>`;
+          tabela.appendChild(tr);
+        });
+      })
+      .catch(err => {
+        overlay.innerHTML = '<p style="color:red">Erro ao carregar dados do relatório.</p>';
+        clearInterval(simular);
+      });
   </script>
 </body>
 </html>
