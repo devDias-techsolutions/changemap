@@ -5,35 +5,166 @@
   <title>Relatório - ChangeMap</title>
   <style>
     body {
-      margin: 0;
       background-color: #000006;
-      font-family: Orbitron, sans-serif;
+      font-family: 'Orbitron', sans-serif;
+      color: #f1f1f1;
+      margin: 0;
+      padding: 40px;
       display: flex;
-      justify-content: center;
+      flex-direction: column;
       align-items: center;
-      height: 100vh;
     }
 
-    iframe {
-      border: none;
-      width: 100%;
-      height: 100vh;
+    h1 {
+      color: #00e5ff;
+      font-size: 36px;
+      text-shadow: 0 0 10px #00e5ff;
+      margin-bottom: 10px;
     }
 
-    .container {
-      width: 100%;
-      height: 100vh;
-      box-shadow: 0 0 20px rgba(0, 229, 255, 0.3);
+    h3 {
+      color: #8ce6ff;
+      font-weight: 300;
+      margin-bottom: 40px;
     }
+
+    .status-boxes {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 40px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .box {
+      background-color: #00121d;
+      padding: 20px 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 12px rgba(0,229,255,0.2);
+      text-align: center;
+      min-width: 150px;
+    }
+
+    .box span {
+      font-size: 26px;
+      font-weight: bold;
+      display: block;
+      margin-top: 5px;
+    }
+
+    .novos        { color: #00bfa6; }
+    .alterados    { color: #ffb400; }
+    .removidos    { color: #c0392b; }
+    .substituidos { color: #8e44ad; }
+
+    table {
+      width: 95%;
+      border-collapse: collapse;
+      background-color: #000518;
+      box-shadow: 0 0 20px rgba(0,229,255,0.05);
+    }
+
+    th, td {
+      padding: 10px 12px;
+      border-bottom: 1px solid #00e5ff11;
+      text-align: left;
+    }
+
+    th {
+      color: #00e5ff;
+      font-weight: bold;
+      text-transform: uppercase;
+      font-size: 12px;
+      border-bottom: 2px solid #00e5ff55;
+    }
+
+    td.status {
+      font-weight: bold;
+    }
+
+    .status-novo        { color: #00bfa6; }
+    .status-alterado    { color: #ffb400; }
+    .status-removido    { color: #c0392b; }
+    .status-substituido { color: #8e44ad; }
   </style>
 </head>
 <body>
-  <div class="container">
-    <iframe
-      src="https://script.google.com/macros/s/AKfycbx0JE0Hc2m_6KPKH0sUXfgS5mO7vJcqbqEXRScRInWoHxmX-HpB9jj2B3w3d0uIsrmt/exec"
-      title="Relatório dinâmico ChangeMap"
-      allowfullscreen
-    ></iframe>
+  <h1>Resultado da Comparação</h1>
+  <h3>Dispositivos com alterações na rede</h3>
+
+  <div class="status-boxes">
+    <div class="box novos">🟢 Novos <span id="count-novo">0</span></div>
+    <div class="box alterados">🟠 Alterados <span id="count-alterado">0</span></div>
+    <div class="box removidos">🔴 Removidos <span id="count-removido">0</span></div>
+    <div class="box substituidos">🟣 Substituídos <span id="count-substituido">0</span></div>
   </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Serial</th>
+        <th>Hostname</th>
+        <th>IP</th>
+        <th>Status</th>
+        <th>Descrição</th>
+      </tr>
+    </thead>
+    <tbody id="table-body">
+      <tr><td colspan="5">Carregando dados...</td></tr>
+    </tbody>
+  </table>
+
+  <script>
+    const endpoint = "https://script.google.com/macros/s/SEU_ID_DO_WEBAPP/exec?view=relatorio-json"; // substitua aqui
+
+    fetch(endpoint)
+      .then(res => res.json())
+      .then(data => {
+        const tbody = document.getElementById("table-body");
+        tbody.innerHTML = "";
+
+        const contadores = {
+          novo: 0,
+          alterado: 0,
+          removido: 0,
+          substituido: 0
+        };
+
+        data.forEach(item => {
+          const statusRaw = (item["Status"] || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
+          let classe = "";
+          let icone = "";
+
+          if (statusRaw.includes("novo")) {
+            contadores.novo++; classe = "status-novo"; icone = "🟢";
+          } else if (statusRaw.includes("alterado")) {
+            contadores.alterado++; classe = "status-alterado"; icone = "🟠";
+          } else if (statusRaw.includes("removido")) {
+            contadores.removido++; classe = "status-removido"; icone = "🔴";
+          } else if (statusRaw.includes("substituido")) {
+            contadores.substituido++; classe = "status-substituido"; icone = "🟣";
+          }
+
+          tbody.innerHTML += `
+            <tr>
+              <td>${item["Serial Number"] || ""}</td>
+              <td>${item["Hostname"] || ""}</td>
+              <td>${item["IP"] || ""}</td>
+              <td class="status ${classe}">${icone} ${item["Status"] || ""}</td>
+              <td>${item["Descrição da Alteração"] || ""}</td>
+            </tr>
+          `;
+        });
+
+        document.getElementById("count-novo").textContent = contadores.novo;
+        document.getElementById("count-alterado").textContent = contadores.alterado;
+        document.getElementById("count-removido").textContent = contadores.removido;
+        document.getElementById("count-substituido").textContent = contadores.substituido;
+      })
+      .catch(() => {
+        document.getElementById("table-body").innerHTML = "<tr><td colspan='5'>Erro ao carregar dados.</td></tr>";
+      });
+  </script>
 </body>
 </html>
