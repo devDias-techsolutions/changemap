@@ -2,17 +2,12 @@
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ChangeMap - Seleção de Bases</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@300;400;700;900&display=swap" rel="stylesheet">
   <style>
     body {
-      margin: 0;
       background-color: #000006;
       color: #00e5ff;
-      font-family: 'Orbitron', sans-serif;
+      font-family: Orbitron, sans-serif;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -28,26 +23,18 @@
       box-shadow: 0 0 30px rgba(0,229,255,0.3);
       display: inline-block;
     }
-    input {
+    input, button {
       padding: 10px;
       width: 220px;
       border: none;
       border-radius: 6px;
       margin-bottom: 15px;
+      font-size: 16px;
     }
     button {
-      padding: 12px 24px;
-      font-weight: bold;
-      border: none;
-      border-radius: 50px;
       background: #00e5ff;
       color: #001b2e;
       cursor: pointer;
-      font-size: 16px;
-    }
-    p.note {
-      margin-top: 30px;
-      color: #aaa;
     }
   </style>
 </head>
@@ -55,38 +42,28 @@
   <div class="container">
     <h1 style="font-size: 48px; text-shadow: 0 0 10px #00e5ff;">ChangeMap</h1>
     <p style="font-size: 20px; color: #8ce6ff; margin-bottom: 40px;">Selecione as bases e execute a análise de mudanças</p>
-
     <form id="compareForm" class="form-box">
-      <div>
-        <label><strong>Base Atual:</strong></label><br>
-        <input type="text" id="abaAtual" placeholder="Ex: Fev2025" required><br>
-
-        <label><strong>Base Anterior:</strong></label><br>
-        <input type="text" id="abaAnterior" placeholder="Ex: Jan2025" required><br>
-      </div>
-
+      <label><strong>Base Atual:</strong></label><br>
+      <input type="text" id="abaAtual" placeholder="Ex: Fev2025" required><br>
+      <label><strong>Base Anterior:</strong></label><br>
+      <input type="text" id="abaAnterior" placeholder="Ex: Jan2025" required><br>
       <button type="submit">🚀 Executar Comparação</button>
     </form>
-
-    <p class="note">Após executar, você será redirecionado para execução via Apps Script.</p>
   </div>
 
   <script>
     document.getElementById("compareForm").addEventListener("submit", function(e) {
       e.preventDefault();
-
       const atual = document.getElementById("abaAtual").value;
       const anterior = document.getElementById("abaAnterior").value;
-
       if (!atual || !anterior) {
         alert("Preencha ambas as bases.");
         return;
       }
 
-      const endpoint = "https://script.google.com/macros/s/AKfycbwAe5PZ7CmpGja8VqpR6IuIK3mCCryG9IDpKry8npQnjmC4LA_9qUBuC_u-G-uv6tRw/exec";
-      const url = `${endpoint}?abaAtual=${encodeURIComponent(atual)}&abaAnterior=${encodeURIComponent(anterior)}`;
-
-      // Redireciona para o Apps Script diretamente, evitando problema de CORS
+      // Redireciona diretamente para o Web App
+      const url = "https://script.google.com/macros/s/AKfycbwAe5PZ7CmpGja8VqpR6IuIK3mCCryG9IDpKry8npQnjmC4LA_9qUBuC_u-G-uv6tRw/exec"
+        + `?abaAtual=${encodeURIComponent(atual)}&abaAnterior=${encodeURIComponent(anterior)}`;
       window.location.href = url;
     });
   </script>
