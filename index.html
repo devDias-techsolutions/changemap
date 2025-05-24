@@ -61,7 +61,9 @@
         alert("Preencha ambas as bases.");
         return;
       }
-      const url = "https://script.google.com/macros/s/AKfycbyVpFa3MTcUSfTKXAdHwCp8R9rNf12p7iNeaHZRsiiffHm0IyB4Yh9aFZBvGWsQBRzV/exec+`?abaAtual=${encodeURIComponent(atual)}&abaAnterior=${encodeURIComponent(anterior)}`";
+
+      const url = "https://script.google.com/macros/s/AKfycbyVpFa3MTcUSfTKXAdHwCp8R9rNf12p7iNeaHZRsiiffHm0IyB4Yh9aFZBvGWsQBRzV/exec"
+        + `?abaAtual=${encodeURIComponent(atual)}&abaAnterior=${encodeURIComponent(anterior)}`;
       window.location.href = url;
     });
   </script>
