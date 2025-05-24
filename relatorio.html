@@ -1,196 +1,822 @@
 <!DOCTYPE html>
-<html lang="pt-br">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Relatório - ChangeMap</title>
-  <style>
-    body {
-      background-color: #000006;
-      background-image: 
-        radial-gradient(circle at 20% 35%, rgba(0, 229, 255, 0.05) 1px, transparent 2px),
-        radial-gradient(circle at 75% 65%, rgba(0, 229, 255, 0.07) 1px, transparent 2px),
-        linear-gradient(90deg, rgba(0, 229, 255, 0.03) 1px, transparent 1px),
-        linear-gradient(to bottom, transparent 95%, rgba(0, 229, 255, 0.1) 100%);
-      background-size: 50px 50px, 70px 70px, 40px, 100%;
-      background-position: center;
-      background-attachment: fixed;
-      color: #f1f1f1;
-      margin: 0;
-      padding: 20px;
-      font-family: Arial, sans-serif;
-    }
-    .main-container {
-      background-color: rgba(0, 10, 20, 0.85);
-      padding: 30px;
-      border-radius: 12px;
-      margin: 20px auto;
-      box-shadow: 0 0 30px rgba(0, 229, 255, 0.3), 0 0 40px rgba(0, 0, 0, 0.6);
-      border: 1px solid rgba(0, 229, 255, 0.3);
-      max-width: 95%;
-      width: 1200px;
-    }
-    .header {
-      text-align: center;
-      margin-bottom: 40px;
-    }
-    .header h1 {
-      font-size: 2.5rem;
-      color: #00e5ff;
-      text-shadow: 0 0 10px rgba(0,229,255,0.8);
-    }
-    .header h2 {
-      font-size: 1.2rem;
-      color: #8ce6ff;
-      font-weight: 300;
-      margin-top: 10px;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-      background-color: rgba(0, 0, 6, 0.7);
-      border-radius: 8px;
-      overflow: hidden;
-    }
-    th, td {
-      padding: 14px 18px;
-      border: 1px solid rgba(31, 40, 51, 0.7);
-      font-size: 15px;
-      text-align: left;
-    }
-    th {
-      background-color: rgba(31, 40, 51, 0.8);
-      color: #00e5ff;
-    }
-    tbody tr:hover {
-      background-color: #1F2833;
-    }
-    .status-novo { color: #00bfa6; font-weight: bold; }
-    .status-removido { color: #c0392b; font-weight: bold; }
-    .status-substituido { color: #8e44ad; font-weight: bold; }
-    .status-alterado { color: #ffb400; font-weight: bold; }
-    .loading-overlay {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background-color: rgba(0, 5, 24, 0.85);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-    }
-    .progress-container {
-      width: 90%;
-      max-width: 600px;
-      height: 10px;
-      background-color: rgba(255, 255, 255, 0.1);
-      border-radius: 5px;
-      overflow: hidden;
-      margin-bottom: 15px;
-    }
-    .progress-bar {
-      height: 100%;
-      width: 0%;
-      background: linear-gradient(90deg, #00c6a9, #00e0ff);
-      border-radius: 5px;
-      animation: pulse 1.5s infinite;
-    }
-    .progress-percentage {
-      color: #fff;
-      font-size: 14px;
-      margin-top: 5px;
-    }
-    .data-stream {
-      font-family: monospace;
-      color: rgba(0, 230, 255, 0.5);
-      font-size: 12px;
-      margin-top: 30px;
-      letter-spacing: 2px;
-      height: 16px;
-      overflow: hidden;
-    }
-    .data-text {
-      white-space: nowrap;
-      animation: scrollData 15s linear infinite;
-    }
-    @keyframes scrollData {
-      from { transform: translateX(100%); }
-      to { transform: translateX(-100%); }
-    }
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.8; }
-    }
-  </style>
-</head>
-<body>
-  <div class="main-container">
-    <div class="header">
-      <h1>📊 ChangeMap</h1>
-      <h2>Network Device Change Mapping</h2>
-    </div>
-
-    <div class="loading-overlay" id="carregando">
-      <p style="color:#00e5ff">Analisando dispositivos e gerando relatório...</p>
-      <div class="progress-container"><div class="progress-bar" id="barraProgresso"></div></div>
-      <div class="progress-percentage" id="percentual">0%</div>
-      <div class="data-stream"><div class="data-text">010101001011010101100101101010101101...</div></div>
-    </div>
-
-    <table>
-      <thead>
-        <tr><th>Serial</th><th>Hostname</th><th>IP</th><th>Status</th><th>Descrição</th></tr>
-      </thead>
-      <tbody id="tabelaRelatorio"></tbody>
-    </table>
-  </div>
-
-  <script>
-    const barra = document.getElementById('barraProgresso');
-    const percentual = document.getElementById('percentual');
-    const overlay = document.getElementById('carregando');
-    const tabela = document.getElementById('tabelaRelatorio');
-
-    let progresso = 0;
-    const simular = setInterval(() => {
-      if (progresso < 98) {
-        progresso += Math.random() * 3;
-        barra.style.width = progresso + '%';
-        percentual.textContent = Math.floor(progresso) + '%';
+<html>
+  <head>
+    <base target="_top">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body {
+        /* Usando uma cor de fundo escura com uma imagem de circuito simulada com gradiente */
+        background-color: #000006;
+        background-image: 
+          radial-gradient(circle at 20% 35%, rgba(0, 229, 255, 0.05) 1px, transparent 2px),
+          radial-gradient(circle at 75% 65%, rgba(0, 229, 255, 0.07) 1px, transparent 2px),
+          linear-gradient(90deg, rgba(0, 229, 255, 0.03) 1px, transparent 1px),
+          linear-gradient(to bottom, transparent 95%, rgba(0, 229, 255, 0.1) 100%);
+        background-size: 50px 50px, 70px 70px, 40px, 100%;
+        background-position: center;
+        background-attachment: fixed;
+        color: #f1f1f1;
+        margin: 0;
+        padding: 20px;
+        font-family: Arial, sans-serif;
       }
-    }, 300);
+      .status-icon {
+        font-style: normal;
+        font-size: 16px;
+        margin-right: 10px;
+        display: inline-block;
+        width: 24px;
+        height: 24px;
+        line-height: 24px;
+        text-align: center;
+        border-radius: 50%;
+        background-color: rgba(0, 0, 0, 0.4);
+        box-shadow: 0 0 8px rgba(0, 229, 255, 0.3);
+        text-shadow: 0 0 5px currentColor;
+      }
 
-    fetch("https://script.google.com/macros/s/AKfycbwAe5PZ7CmpGja8VqpR6IuIK3mCCryG9IDpKry8npQnjmC4LA_9qUBuC_u-G-uv6tRw/exec?view=relatorio-json")
-      .then(res => res.json())
-      .then(dados => {
-        clearInterval(simular);
-        barra.style.width = '100%';
-        percentual.textContent = '100%';
-        setTimeout(() => overlay.style.display = 'none', 500);
+      h2 {
+        color: #00e5ff;
+        font-size: 32px;
+        margin-bottom: 20px;
+        border-bottom: 1px solid rgba(0, 229, 255, 0.3);
+        padding-bottom: 10px;
+        text-align: center;
+        text-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
+        letter-spacing: 1px;
+      }
 
-        dados.forEach(item => {
-          const tr = document.createElement('tr');
-          const status = item["Status"].toLowerCase();
-          let classe = '';
-          if (status.includes("novo")) classe = 'status-novo';
-          else if (status.includes("removido")) classe = 'status-removido';
-          else if (status.includes("substituido")) classe = 'status-substituido';
-          else if (status.includes("alterado")) classe = 'status-alterado';
+      h4 {
+        color: #00e5ff;
+        font-size: 22px;
+        margin-bottom: 30px;
+        padding-bottom: 10px;
+        text-align: center;
+        font-weight: 300;
+        opacity: 0.9;
+        letter-spacing: 0.5px;
+      }
 
-          tr.innerHTML = `<td>${item["Serial Number"] || ''}</td>
-                          <td>${item["Hostname"] || ''}</td>
-                          <td>${item["IP"] || ''}</td>
-                          <td class="${classe}">${item["Status"] || ''}</td>
-                          <td>${item["Descrição da Alteração"] || ''}</td>`;
-          tabela.appendChild(tr);
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        background-color: rgba(0, 0, 6, 0.7);
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.4), 0 0 25px rgba(0, 229, 255, 0.15);
+        border-radius: 8px;
+        overflow: hidden;
+        border: 1px solid rgba(0, 229, 255, 0.15);
+        margin-top:20px;
+      }
+
+      th, td {
+        border: 1px solid rgba(31, 40, 51, 0.7);
+        padding: 14px 18px;
+        text-align: left;
+        font-size:15px;
+      }
+
+      th {
+        background-color: rgba(31, 40, 51, 0.8);
+        color: #00e5ff;
+        font-weight: 500;
+        letter-spacing: 0.5px;
+        text-shadow: 0 0 5px rgba(0, 229, 255, 0.3);
+      }
+      
+      tbody tr:hover {
+        background-color: #1F2833;
+      }
+
+      select, button {
+        margin: 12px 8px 24px 0;
+        padding: 12px 22px;
+        background-color: rgba(0, 6, 38, 0.7);
+        color: #00e5ff;
+        border: 1px solid rgba(0, 229, 255, 0.3);
+        border-radius: 4px;
+        transition: all 0.3s ease;
+        font-weight: 500;
+        font-size:15px;
+      }
+
+      button {
+        background-color: rgba(0, 26, 51, 0.8);
+        padding: 10px 20px;
+        border-radius: 50px;
+        letter-spacing: 0.5px;
+      }
+
+      select:hover, button:hover {
+        background-color: rgba(0, 38, 77, 0.9);
+        box-shadow: 0 0 12px rgba(0, 229, 255, 0.4);
+        cursor: pointer;
+        transform: translateY(-1px);
+      }
+
+      select:focus {
+        outline: none;
+        border-color: #00e5ff;
+        box-shadow: 0 0 5px rgba(0, 229, 255, 0.5);
+      }
+
+      .botao-container {
+        margin-bottom: 25px;
+        background-color: rgba(31, 40, 51, 0.6);
+        padding: 22px;
+        border-radius: 8px;
+        border-left: 3px solid #00e5ff;
+        box-shadow: inset 0 0 20px rgba(0, 229, 255, 0.05);
+      }
+
+      label {
+        color: #00e5ff;
+        margin-right: 12px;
+        font-weight: 500;
+        letter-spacing: 0.5px;
+      }
+
+      .totals-row {
+        font-weight: bold;
+        background-color: #1F2833;
+      }
+      
+      .status-summary {
+        background-color: rgba(31, 40, 51, 0.6);
+        border-radius: 8px;
+        padding: 22px;
+        margin-bottom: 25px;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+        border-left: 3px solid #00e5ff;
+        box-shadow: inset 0 0 20px rgba(0, 229, 255, 0.05);
+      }
+      
+      .status-summary span {
+        display: inline-flex;
+        align-items: center;
+        margin: 6px 18px 6px 0;
+        padding: 12px 18px;
+        border-radius: 50px;
+        background-color: rgba(0, 10, 30, 0.6);
+        box-shadow: 0 0 10px rgba(0, 229, 255, 0.1);
+        transition: all 0.3s ease;
+        font-size:15px;
+      }
+      
+      .status-summary span:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 0 15px rgba(0, 229, 255, 0.2);
+      }
+      
+      .status-summary::before {
+        content: "Resumo por Status:";
+        font-weight: bold;
+        color: #00e5ff;
+        margin-right: 15px;
+        font-size: 14px;
+        flex-basis: 100%;
+        margin-bottom: 10px;
+      }
+      
+      #totalDetalhado span {
+        display: inline-block;
+        margin-right: 15px;
+        padding: 3px 8px;
+        border-radius: 4px;
+        background-color: rgba(0, 0, 0, 0.2);
+      }
+      
+      /* Adicionar container principal para melhorar legibilidade */
+      .main-container {
+        background-color: rgba(0, 10, 20, 0.85);
+        padding: 30px; /* Aumentado de 20px para 30px para mais espaço interno */
+        border-radius: 12px; /* Aumentado de 10px para 12px */
+        margin: 20px auto; /* Centralizado na página com margem superior e inferior */
+        box-shadow: 0 0 30px rgba(0, 229, 255, 0.3), 0 0 40px rgba(0, 0, 0, 0.6); /* Sombra mais acentuada */
+        border: 1px solid rgba(0, 229, 255, 0.3); /* Borda um pouco mais visível */
+        max-width: 95%; /* Define uma largura máxima relativa à tela */
+        width: 1200px; /* Aumenta a largura base para 1200px */
+      }
+      
+      /* MODIFICADO: Estilo da tela de carregamento reposicionada */
+      .loading-overlay {
+        position: fixed; /* Mudado de absolute para fixed */
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 5, 24, 0.85);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        backdrop-filter: blur(5px);
+      }
+
+      .loading-container {
+        width: 90%;
+        max-width: 600px;
+        text-align: center;
+        position: relative;
+        top: -50px; /* Move um pouco para cima para centralizar melhor visualmente */
+      }
+
+      .loading-text {
+        color: #00e0ff;
+        font-size: 1.2em;
+        margin-bottom: 25px;
+        letter-spacing: 1px;
+        text-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
+      }
+
+      .progress-container {
+        width: 100%;
+        height: 10px;
+        background-color: rgba(255, 255, 255, 0.1);
+        border-radius: 5px;
+        overflow: hidden;
+        position: relative;
+        margin-bottom: 15px;
+      }
+
+      .progress-bar {
+        height: 100%;
+        width: 0%;
+        background: linear-gradient(90deg, #00c6a9, #00e0ff);
+        border-radius: 5px;
+        position: relative;
+        transition: width 0.4s ease;
+        animation: pulse 1.5s infinite;
+      }
+
+      .progress-bar::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+        animation: shine 2s infinite;
+      }
+
+      .progress-percentage {
+        color: #fff;
+        font-size: 14px;
+        margin-top: 5px;
+      }
+
+      .loading-message {
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 0.9em;
+        margin-top: 10px;
+        font-style: italic;
+      }
+
+      /* Efeito de brilho intermitente na borda do progresso */
+      .progress-container::before {
+        content: '';
+        position: absolute;
+        top: -1px;
+        left: -1px;
+        right: -1px;
+        bottom: -1px;
+        border-radius: 6px;
+        background: linear-gradient(90deg, #00c6a9, #00e0ff, #00c6a9);
+        z-index: -1;
+        animation: borderPulse 2s infinite;
+      }
+
+      /* Indicadores tech ao redor da barra de progresso */
+      .tech-indicators {
+        position: absolute;
+        width: 100%;
+        top: -15px;
+        left: 0;
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .tech-indicator {
+        width: 3px;
+        height: 7px;
+        background-color: #00e0ff;
+        opacity: 0.5;
+      }
+
+      .tech-indicator:nth-child(odd) {
+        height: 10px;
+        animation: flash 3s infinite;
+      }
+
+      @keyframes pulse {
+        0%, 100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.8;
+        }
+      }
+
+      @keyframes shine {
+        0% {
+          transform: translateX(-100%);
+        }
+        100% {
+          transform: translateX(100%);
+        }
+      }
+
+      @keyframes borderPulse {
+        0%, 100% {
+          opacity: 0.5;
+        }
+        50% {
+          opacity: 0.2;
+        }
+      }
+
+      @keyframes flash {
+        0%, 100% {
+          opacity: 0.5;
+        }
+        50% {
+          opacity: 1;
+        }
+      }
+
+      /* Animação de dados digitais na parte inferior */
+      .data-stream {
+        font-family: monospace;
+        color: rgba(0, 230, 255, 0.5);
+        font-size: 12px;
+        margin-top: 30px;
+        letter-spacing: 2px;
+        height: 16px;
+        overflow: hidden;
+        position: relative;
+      }
+
+      .data-text {
+        white-space: nowrap;
+        animation: scrollData 15s linear infinite;
+      }
+
+      @keyframes scrollData {
+        from {
+          transform: translateX(100%);
+        }
+        to {
+          transform: translateX(-100%);
+        }
+      }
+
+    
+
+    </style>
+  </head>
+  <body>
+    <!-- MODIFICADO: Tela de carregamento agora é o primeiro elemento -->
+    <div id="loadingSplash" class="loading-overlay">
+      <div class="loading-container">
+        <h3 class="loading-text">Carregando Relatório</h3>
+        <div class="progress-container">
+          <div class="tech-indicators">
+            <div class="tech-indicator"></div>
+            <div class="tech-indicator"></div>
+            <div class="tech-indicator"></div>
+            <div class="tech-indicator"></div>
+            <div class="tech-indicator"></div>
+            <div class="tech-indicator"></div>
+            <div class="tech-indicator"></div>
+            <div class="tech-indicator"></div>
+          </div>
+          <div id="progressBar" class="progress-bar"></div>
+        </div>
+        <div id="progressPercentage" class="progress-percentage">0%</div>
+        <div class="loading-message">Processando dados da rede...</div>
+        <div class="data-stream">
+          <div class="data-text">01001100 01001111 01000001 01000100 01001001 01001110 01000111 00101110 00101110 00101110 01000100 01000001 01010100 01000001 00101110 00101110 00101110</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="main-container">      
+      <h2><i class="fas fa-server"></i> ChangeMap</h2>
+      <h4> Network Device Change Mapping</h4>
+
+      <div class="botao-container">
+        <label for="statusFilter">Filtrar por status:</label>
+        <select id="statusFilter" onchange="filtrarTabela()">
+          <option value="Todos">Todos</option>
+          <option value="Alterado">Alterado</option>
+          <option value="Dispositivo Removido">Dispositivo Removido</option>
+          <option value="Novo Dispositivo">Novo Dispositivo</option>
+          <option value="Substituído">Substituído</option>
+        </select>
+
+        <button onclick="exportarPDF()"><i class="fas fa-file-pdf"></i> Exportar PDF</button>
+        <button onclick="exportarCSV()"><i class="fas fa-file-csv"></i> Exportar CSV</button>
+      </div>
+      
+      <div class="status-summary" id="totalDetalhado">
+        <!-- Detalhamento por status será preenchido via script -->
+      </div>
+
+      <table id="tabelaRelatorio">
+        <thead>
+          <tr>
+            <th>Serial Number</th>
+            <th>Hostname</th>
+            <th>IP</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="corpoTabela">
+          <!-- Dados serão preenchidos via script -->
+        </tbody>
+        <tfoot>
+          <tr id="linhaTotal" class="totals-row">
+            <td colspan="3">Total</td>
+            <td id="totalDispositivos">0</td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+
+    <script>
+      const statusCores = {
+        "Alterado": "#ffb400",
+        "Dispositivo Removido": "#c0392b",
+        "Novo Dispositivo": "#00bfa6",
+        "Substituído": "#8e44ad"
+      };
+
+      const statusIcones = {
+        "Alterado": "<i class='status-icon'>⟳</i>",
+        "Dispositivo Removido": "<i class='status-icon'>✖</i>", 
+        "Novo Dispositivo": "<i class='status-icon'>✚</i>",
+        "Substituído": "<i class='status-icon'>⇄</i>"
+      };
+
+      let dadosRelatorio = [];
+      let contadores = {
+        "Alterado": 0,
+        "Dispositivo Removido": 0,
+        "Novo Dispositivo": 0,
+        "Substituído": 0
+      };
+
+      function exibirTabela(filtro = "Todos") {
+        const corpo = document.getElementById("corpoTabela");
+        corpo.innerHTML = "";
+        
+        let contador = 0;
+        // Resetar contadores antes de contar novamente
+        Object.keys(contadores).forEach(key => {
+          contadores[key] = 0;
         });
-      })
-      .catch(err => {
-        overlay.innerHTML = '<p style="color:red">Erro ao carregar dados do relatório.</p>';
-        clearInterval(simular);
-      });
-  </script>
-</body>
+
+        dadosRelatorio.forEach(linha => {
+          const status = linha[3];
+          
+          // Incrementar contadores por status (mesmo os que não estão no filtro atual)
+          if (contadores.hasOwnProperty(status)) {
+            contadores[status]++;
+          }
+          
+          if (filtro === "Todos" || status === filtro) {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+              <td>${linha[0]}</td>
+              <td>${linha[1]}</td>
+              <td>${linha[2]}</td>
+              <td style="color: ${statusCores[status] || "#f1f1f1"};">
+                ${statusIcones[status] || ""} ${status}
+              </td>
+            `;
+            corpo.appendChild(tr);
+            contador++;
+          }
+        });
+
+        // Atualizar linha de total
+        const totalDispositivos = document.getElementById("totalDispositivos");
+        
+        if (filtro === "Todos") {
+          totalDispositivos.textContent = contador;
+        } else {
+          totalDispositivos.textContent = contador;
+          totalDispositivos.innerHTML = `<span style="color: ${statusCores[filtro] || "#f1f1f1"};">${contador}</span>`;
+        }
+        
+        // Atualizar detalhamento por status (agora acima da tabela)
+        const totalDetalhado = document.getElementById("totalDetalhado");
+        let detalheHTML = '';
+        
+        Object.entries(contadores).forEach(([status, quantidade]) => {
+          if (quantidade > 0) {
+            detalheHTML += `<span style="color: ${statusCores[status]};">
+            ${statusIcones[status]} ${status}: <strong>${quantidade}</strong></span>`;
+          }
+        });
+        
+        totalDetalhado.innerHTML = detalheHTML;
+      }
+
+      function filtrarTabela() {
+        const filtro = document.getElementById("statusFilter").value;
+        exibirTabela(filtro);
+      }
+
+      function exportarPDF() {
+        const novaJanela = window.open('', '_blank');
+        
+        // Cores para a versão clara do PDF
+        const coresClaras = {
+          fundo: "#ffffff",
+          titulo: "#005c7a",
+          cabecalhoTabela: "#e6f7ff",
+          bordaTabela: "#cccccc",
+          textoNormal: "#333333",
+          totalFundo: "#e6f7ff",
+          bordaResumo: "#00a2cc"
+        };
+        
+        // Mapear cores do tema escuro para o tema claro no PDF
+        const statusCoresClaras = {
+          "Alterado": "#ff7700",
+          "Dispositivo Removido": "#e74c3c",
+          "Novo Dispositivo": "#009688",
+          "Substituído": "#9b59b6"
+        };
+        
+        // Criar HTML com o estilo claro para o PDF
+        novaJanela.document.write(`
+          <html>
+          <head>
+            <title>Relatório de Dispositivos</title>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+            <style>
+              body {
+                font-family: Arial, sans-serif;
+                background-color: ${coresClaras.fundo};
+                color: ${coresClaras.textoNormal};
+                margin: 20px;
+                padding: 20px;
+              }
+              
+              h2 {
+                color: ${coresClaras.titulo};
+                font-size: 32px;
+                margin-bottom: 25px;
+                border-bottom: 1px solid ${coresClaras.bordaTabela};
+                padding-bottom: 10px;
+              }
+              
+              table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-bottom: 30px;
+              }
+              
+              th, td {
+                border: 1px solid ${coresClaras.bordaTabela};
+                padding: 12px;
+                text-align: left;
+              }
+              
+              th {
+                background-color: ${coresClaras.cabecalhoTabela};
+                color: ${coresClaras.titulo};
+              }
+              
+              .status-summary {
+                background-color: #f5f5f5;
+                border-radius: 5px;
+                padding: 15px;
+                margin-bottom: 20px;
+                display: flex;
+                flex-wrap: wrap;
+                border-left: 3px solid ${coresClaras.bordaResumo};
+              }
+              
+              .status-summary span {
+                display: inline-flex;
+                align-items: center;
+                margin: 5px 15px 5px 0;
+                padding: 8px 12px;
+                border-radius: 4px;
+                background-color: #f9f9f9;
+              }
+              
+              .status-summary::before {
+                content: "Resumo por Status:";
+                font-weight: bold;
+                color: ${coresClaras.titulo};
+                margin-right: 15px;
+                font-size: 14px;
+                flex-basis: 100%;
+                margin-bottom: 10px;
+              }
+              
+              .totals-row {
+                font-weight: bold;
+                background-color: ${coresClaras.totalFundo};
+              }
+              
+              .status-icon {
+                font-style: normal;
+                font-size: 16px;
+                margin-right: 8px;
+                display: inline-block;
+                width: 22px;
+                height: 22px;
+                line-height: 22px;
+                text-align: center;
+                border-radius: 50%;
+                background-color: rgba(0, 0, 0, 0.05);
+              }
+              
+              @media print {
+                body {
+                  padding: 0;
+                  margin: 0;
+                }
+                button {
+                  display: none;
+                }
+              }
+            </style>
+          </head>
+          <body>
+            <h2><i class="fas fa-microchip"></i> Relatório de Dispositivos</h2>
+        `);
+        
+        // Adicionar resumo por status
+        novaJanela.document.write('<div class="status-summary">');
+        
+        Object.entries(contadores).forEach(([status, quantidade]) => {
+          if (quantidade > 0) {
+            novaJanela.document.write(`
+              <span style="color: ${statusCoresClaras[status]};">
+                ${statusIcones[status]} ${status}: <strong>${quantidade}</strong>
+              </span>
+            `);
+          }
+        });
+        
+        novaJanela.document.write('</div>');
+        
+        // Adicionar tabela
+        novaJanela.document.write('<table>');
+        novaJanela.document.write(`
+          <thead>
+            <tr>
+              <th>Serial Number</th>
+              <th>Hostname</th>
+              <th>IP</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+        `);
+        
+        // Filtrar dados conforme filtro atual
+        const filtroAtual = document.getElementById("statusFilter").value;
+        let contador = 0;
+        
+        dadosRelatorio.forEach(linha => {
+          const status = linha[3];
+          if (filtroAtual === "Todos" || status === filtroAtual) {
+            novaJanela.document.write(`
+              <tr>
+                <td>${linha[0]}</td>
+                <td>${linha[1]}</td>
+                <td>${linha[2]}</td>
+                <td style="color: ${statusCoresClaras[status] || coresClaras.textoNormal};">
+                  ${statusIcones[status] || ""} ${status}
+                </td>
+              </tr>
+            `);
+            contador++;
+          }
+        });
+        
+        // Adicionar linha de total
+        novaJanela.document.write(`
+          </tbody>
+          <tfoot>
+            <tr class="totals-row">
+              <td colspan="3">Total</td>
+              <td>${contador}</td>
+            </tr>
+          </tfoot>
+        `);
+        
+        novaJanela.document.write('</table>');
+        novaJanela.document.write('<button onclick="window.print()">Imprimir</button>');
+        novaJanela.document.write('</body></html>');
+        novaJanela.document.close();
+      }
+
+      function exportarCSV() {
+        let csv = "Serial Number,Hostname,IP,Status\n";
+        dadosRelatorio.forEach(linha => {
+          csv += linha.join(",") + "\n";
+        });
+
+        // Adicionar linha de total ao CSV
+        const filtroAtual = document.getElementById("statusFilter").value;
+        let dispContados = 0;
+        
+        dadosRelatorio.forEach(linha => {
+          const status = linha[3];
+          if (filtroAtual === "Todos" || status === filtroAtual) {
+            dispContados++;
+          }
+        });
+        
+        csv += `Total,,${dispContados} dispositivos,\n`;
+        
+        // Adicionar detalhamento por status
+        Object.entries(contadores).forEach(([status, quantidade]) => {
+          if (quantidade > 0) {
+            csv += `${status},,${quantidade},\n`;
+          }
+        });
+
+        const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = "relatorio_dispositivos.csv";
+        link.click();
+      }
+
+      window.onload = function () {
+        google.script.run.withSuccessHandler(function (dados) {
+          dadosRelatorio = dados;
+          exibirTabela();
+          // Chamar dadosCarregados após o carregamento real dos dados
+          dadosCarregados();
+        }).obterDadosRelatorio();
+        
+        // Iniciar a simulação quando a página carregar
+        simulateLoading();
+      };
+      
+      // Função para simular o progresso de carregamento
+      function simulateLoading() {
+        const progressBar = document.getElementById('progressBar');
+        const progressPercentage = document.getElementById('progressPercentage');
+        const loadingSplash = document.getElementById('loadingSplash');
+        
+        let progress = 0;
+        const interval = setInterval(function() {
+          // Aumenta o progresso mais rápido no início e mais devagar no final
+          if (progress < 85) {
+            progress += Math.random() * 8;
+          } else {
+            progress += Math.random() * 2;
+          }
+          
+          if (progress >= 100) {
+            progress = 100;
+            clearInterval(interval);
+            
+            // Aguarda um pouco antes de esconder a tela de carregamento
+            setTimeout(function() {
+              loadingSplash.style.opacity = '0';
+              loadingSplash.style.transition = 'opacity 0.5s ease';
+              
+              setTimeout(function() {
+                loadingSplash.style.display = 'none';
+              }, 500);
+            }, 500);
+          }
+          
+          progressBar.style.width = progress + '%';
+          progressPercentage.textContent = Math.round(progress) + '%';
+        }, 200);
+      }
+      
+      // Função para chamar quando os dados estiverem realmente carregados
+      function dadosCarregados() {
+        document.getElementById('progressBar').style.width = '100%';
+        document.getElementById('progressPercentage').textContent = '100%';
+        
+        setTimeout(function() {
+          document.getElementById('loadingSplash').style.opacity = '0';
+          document.getElementById('loadingSplash').style.transition = 'opacity 0.5s ease';
+          
+          setTimeout(function() {
+            document.getElementById('loadingSplash').style.display = 'none';
+          }, 500);
+        }, 300);
+      }
+    </script>
+  </body>
 </html>
